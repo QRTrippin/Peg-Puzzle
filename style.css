@@ -1,9 +1,5 @@
 header {
     background-color: #004aad;
-    'background-image: url('https://i.postimg.cc/q7yVkv66/QR-App-1.png');
-    'background-size: 500px 200px;
-    'background-position: center;
-    'background-attachment: scroll;
     font-family: 'Montserrat', sans-serif;
     color: White;
     padding: 1rem 0;
@@ -66,4 +62,11 @@ body {
 
 .jumping {
     animation: jump-animation 0.5s ease-in-out;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem 0;
+    background-color: #004aad;
+    color: white;
 }
