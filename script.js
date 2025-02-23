@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function handlePegClick(event) {
-        if (gameOver) return; // Prevent moves after game over
+        if (gameOver) return;
 
         let peg = event.target;
         let row = parseInt(peg.dataset.row);
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 resetSelection();
             }
-        } else {
+        } else if (gameState[row][col].occupied) {
             legalMoves = getLegalMoves(row, col);
             if (legalMoves.length === 1) {
                 executeMove({ row, col }, legalMoves[0]);
@@ -64,17 +64,63 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function executeMove(from, to) {
+        let peg = gameState[from.row][from.col].element;
+        let jumpedPeg = gameState[to.midRow][to.midCol].element;
+        let targetPeg = gameState[to.row][to.col].element;
+        
+        // Show defeated ninja image
+        jumpedPeg.style.backgroundImage = "url('./Ninja Player Fire.png')";
+        
+        // Animate the jumping ninja with an arched path
+        peg.style.transition = "transform 0.5s ease-in-out";
+        let deltaX = (to.col - from.col) * 60;
+        let deltaY = (to.row - from.row) * 60;
+        let arcHeight = -50; // Creates an arched jump effect
+        requestAnimationFrame(() => {
+            peg.style.transform = `translate(${deltaX / 2}px, ${arcHeight}px)`;
+            setTimeout(() => {
+                peg.style.transform = `translate(${deltaX}px, ${deltaY}px) rotate(360deg)`;
+            }, 250);
+        });
+        
+        setTimeout(() => {
+            peg.style.transform = "none";
+            peg.style.transition = "none";
+            peg.classList.remove("occupied");
+            peg.classList.add("empty");
+            gameState[from.row][from.col].occupied = false;
+            peg.classList.remove("occupied");
+            peg.classList.add("empty");
+            jumpedPeg.style.backgroundImage = "";
+            jumpedPeg.classList.remove("occupied");
+            jumpedPeg.classList.add("empty");
+            gameState[to.midRow][to.midCol].occupied = false;
+            
+            gameState[from.row][from.col].occupied = false;
+            gameState[to.row][to.col].occupied = true;
+            
+            peg.classList.remove("occupied");
+            peg.classList.add("empty");
+            targetPeg.classList.remove("empty");
+            targetPeg.classList.add("occupied");
+            
+            resetSelection();
+            checkGameOver();
+        }, 600);
+    }
+
     function getLegalMoves(row, col) {
         let moves = [];
         let directions = [
-            { dr: -2, dc: 0 }, // Up
-            { dr: 2, dc: 0 }, // Down
-            { dr: 0, dc: -2 }, // Left
-            { dr: 0, dc: 2 }, // Right
             { dr: -2, dc: -2 }, // Up Left
+            { dr: -2, dc: 0 }, // Up
             { dr: -2, dc: 2 }, // Up Right
             { dr: 2, dc: -2 }, // Down Left
-            { dr: 2, dc: 2 } // Down Right
+            { dr: 2, dc: 0 }, // Down
+            { dr: 2, dc: 2 }, // Down Right
+            { dr: 0, dc: -2 }, // Left
+            { dr: 0, dc: 2 }  // Right
         ];
 
         for (let { dr, dc } of directions) {
@@ -93,33 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return gameState[midRow] && gameState[midRow][midCol] &&
             gameState[newRow] && gameState[newRow][newCol] &&
             gameState[midRow][midCol].occupied && !gameState[newRow][newCol].occupied;
-    }
-
-    function executeMove(from, to) {
-        let peg = gameState[from.row][from.col].element;
-        let jumpedPeg = gameState[to.midRow][to.midCol].element;
-        let targetPeg = gameState[to.row][to.col].element;
-        
-        // Show the temporary image for the jumped peg
-        jumpedPeg.style.backgroundImage = "url('./Ninja Player Fire.png')";
-        
-        setTimeout(() => {
-            jumpedPeg.style.backgroundImage = "";
-            jumpedPeg.classList.remove("occupied");
-            jumpedPeg.classList.add("empty");
-            gameState[to.midRow][to.midCol].occupied = false;
-            
-            peg.classList.remove("occupied");
-            peg.classList.add("empty");
-            targetPeg.classList.remove("empty");
-            targetPeg.classList.add("occupied");
-            
-            gameState[from.row][from.col].occupied = false;
-            gameState[to.row][to.col].occupied = true;
-            
-            resetSelection();
-            checkGameOver();
-        }, 250); // quarter-second delay to show defeated ninja
     }
 
     function resetSelection() {
