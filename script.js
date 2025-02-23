@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let targetPeg = gameState[to.row][to.col].element;
         
         // Show the temporary image for the jumped peg
-        jumpedPeg.style.backgroundImage = "url('https://i.postimg.cc/d1D9QpqC/Ninja-Player-1.png')";
+        jumpedPeg.style.backgroundImage = "url('./Ninja Player Fire.png')";
         
         setTimeout(() => {
             jumpedPeg.style.backgroundImage = "";
