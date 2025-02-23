@@ -5,10 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedPeg = null;
     let legalMoves = [];
     let gameState = [];
+    let gameOver = false;
 
     function createBoard() {
         board.innerHTML = "";
         message.innerText = "";
+        gameOver = false;
         gameState = [];
         let pegId = 0;
         for (let row = 0; row < 5; row++) {
@@ -37,6 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function handlePegClick(event) {
+        if (gameOver) return; // Prevent moves after game over
+
         let peg = event.target;
         let row = parseInt(peg.dataset.row);
         let col = parseInt(peg.dataset.col);
@@ -95,19 +99,27 @@ document.addEventListener("DOMContentLoaded", () => {
         let peg = gameState[from.row][from.col].element;
         let jumpedPeg = gameState[to.midRow][to.midCol].element;
         let targetPeg = gameState[to.row][to.col].element;
-
-        peg.classList.remove("occupied");
-        peg.classList.add("empty");
-        jumpedPeg.classList.remove("occupied");
-        jumpedPeg.classList.add("empty");
-        targetPeg.classList.remove("empty");
-        targetPeg.classList.add("occupied");
-
-        gameState[from.row][from.col].occupied = false;
-        gameState[to.midRow][to.midCol].occupied = false;
-        gameState[to.row][to.col].occupied = true;
-        resetSelection();
-        checkGameOver();
+        
+        // Show the temporary image for the jumped peg
+        jumpedPeg.style.backgroundImage = "url('https://i.postimg.cc/d1D9QpqC/Ninja-Player-1.png')";
+        
+        setTimeout(() => {
+            jumpedPeg.style.backgroundImage = "";
+            jumpedPeg.classList.remove("occupied");
+            jumpedPeg.classList.add("empty");
+            gameState[to.midRow][to.midCol].occupied = false;
+            
+            peg.classList.remove("occupied");
+            peg.classList.add("empty");
+            targetPeg.classList.remove("empty");
+            targetPeg.classList.add("occupied");
+            
+            gameState[from.row][from.col].occupied = false;
+            gameState[to.row][to.col].occupied = true;
+            
+            resetSelection();
+            checkGameOver();
+        }, 1000); // 1-second delay to show defeated ninja
     }
 
     function resetSelection() {
@@ -120,8 +132,10 @@ document.addEventListener("DOMContentLoaded", () => {
         let pegsLeft = gameState.flat().filter(p => p.occupied).length;
         if (pegsLeft === 1) {
             message.innerText = "You are a genius!";
+            gameOver = true;
         } else if (!gameState.some(row => row.some(p => p.occupied && getLegalMoves(parseInt(p.element.dataset.row), parseInt(p.element.dataset.col)).length > 0))) {
             message.innerText = "Game over! No more legal moves.";
+            gameOver = true;
         }
     }
 
