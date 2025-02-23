@@ -30,7 +30,7 @@ body {
 }
 
 .occupied {
-    background-image: url('https://i.postimg.cc/25zT8Fqx/Ninja-Player.png');
+    background-image: url('./Ninja Player.png');
 }
 
 .empty {
