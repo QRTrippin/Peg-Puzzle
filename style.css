@@ -1,0 +1,52 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+#board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+}
+
+.peg {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    transition: transform 0.5s ease-in-out;
+}
+
+.occupied {
+    background-image: url('https://i.postimg.cc/25zT8Fqx/Ninja-Player.png');
+}
+
+.empty {
+    background-color: grey;
+}
+
+.highlight {
+    background-color: red !important;
+}
+
+@keyframes jump-animation {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-50px) rotate(180deg); }
+    100% { transform: translateY(0); }
+}
+
+.jumping {
+    animation: jump-animation 0.5s ease-in-out;
+}
