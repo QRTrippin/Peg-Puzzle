@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             resetSelection();
             checkGameOver();
-        }, 1000); // 1-second delay to show defeated ninja
+        }, 500); // half-second delay to show defeated ninja
     }
 
     function resetSelection() {
